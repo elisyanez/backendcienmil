@@ -14,6 +14,11 @@ public class UsuarioServicio {
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
+    // Autowired sirve para inyectar dependencias automaticamente
+    // Se refiere a dependencias a los objetos que una clase necesita para funcionar
+    // como por ejemplo un repositorio para acceder a datos
+    // La anotacion @Autowired le dice a Spring que debe proporcionar automaticamente
+    // una instancia del repositorio cuando se cree una instancia del servicio
     public UsuarioServicio(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
