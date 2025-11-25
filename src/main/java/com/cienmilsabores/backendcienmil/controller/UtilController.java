@@ -9,11 +9,15 @@ import java.util.stream.Collectors;
 
 import com.cienmilsabores.backendcienmil.model.Region;
 import com.cienmilsabores.backendcienmil.model.Comuna;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/util")
+@Tag(name = "Utilidades", description = "Regiones y comunas disponibles")
 public class UtilController {
 
+    @Operation(summary = "Listar regiones", description = "Devuelve el catalogo de regiones")
     @GetMapping("/regiones")
     public List<RegionDTO> getRegiones() {
         return Arrays.stream(Region.values())
@@ -21,6 +25,7 @@ public class UtilController {
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Listar comunas", description = "Devuelve el catalogo de comunas con su region")
     @GetMapping("/comunas")
     public List<ComunaDTO> getComunas() {
         return Arrays.stream(Comuna.values())
@@ -33,7 +38,7 @@ public class UtilController {
                 .collect(Collectors.toList());
     }
 
-    // DTO para Región
+    // DTO para Region
     public static class RegionDTO {
         public String codigo;
         public String nombre;

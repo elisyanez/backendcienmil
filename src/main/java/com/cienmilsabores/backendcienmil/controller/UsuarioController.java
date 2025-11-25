@@ -16,9 +16,14 @@ import java.util.Optional;
 
 import com.cienmilsabores.backendcienmil.model.Usuario;
 import com.cienmilsabores.backendcienmil.service.UsuarioServicio;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@Tag(name = "Usuarios", description = "Operaciones relacionadas con usuarios")
 public class UsuarioController {
 
     private final UsuarioServicio usuarioServicio;
@@ -27,36 +32,57 @@ public class UsuarioController {
         this.usuarioServicio = usuarioServicio;
     }
 
+    @Operation(summary = "Obtener todos los usuarios", description = "Devuelve una lista de todos los usuarios registrados")
     @GetMapping
+    @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente")
     public List<Usuario> getAll() {
         return usuarioServicio.listAll();
     }
 
+    @Operation(summary = "Obtener usuario por RUN", description = "Devuelve un usuario especifico segun su RUN")
     @GetMapping("/{run}")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Usuario obtenido exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     public ResponseEntity<Usuario> getByRun(@PathVariable String run) {
         Optional<Usuario> usuario = usuarioServicio.getByRun(run);
         return usuario.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Crear un nuevo usuario", description = "Crea un nuevo usuario con la informacion proporcionada")
     @PostMapping
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Solicitud invalida")
+    })
     public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
         Usuario saved = usuarioServicio.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
+    @Operation(summary = "Actualizar un usuario existente", description = "Actualiza la informacion de un usuario existente segun su RUN")
     @PutMapping("/{run}")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     public ResponseEntity<Usuario> update(@PathVariable String run, @RequestBody Usuario usuario) {
         Optional<Usuario> existing = usuarioServicio.getByRun(run);
         if (!existing.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        // Ensure the run (ID) in path and body match; set path value to body to be safe
         usuario.setRun(run);
         Usuario updated = usuarioServicio.save(usuario);
         return ResponseEntity.ok(updated);
     }
 
+    @Operation(summary = "Eliminar un usuario", description = "Elimina un usuario especifico segun su RUN")
     @DeleteMapping("/{run}")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     public ResponseEntity<Void> delete(@PathVariable String run) {
         Optional<Usuario> existing = usuarioServicio.getByRun(run);
         if (!existing.isPresent()) {
