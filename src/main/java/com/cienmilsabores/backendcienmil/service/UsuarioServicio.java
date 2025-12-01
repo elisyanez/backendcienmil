@@ -7,18 +7,15 @@ import java.util.Optional;
 
 import com.cienmilsabores.backendcienmil.repository.UsuarioRepository;
 import com.cienmilsabores.backendcienmil.model.Usuario;
+import com.cienmilsabores.backendcienmil.dto.request.RegisterRequest;
+import com.cienmilsabores.backendcienmil.exception.AuthenticationException;
+import com.cienmilsabores.backendcienmil.exception.UsuarioExistenteException;
 
 @Service
 public class UsuarioServicio {
 
     private final UsuarioRepository usuarioRepository;
 
-    
-    // Autowired sirve para inyectar dependencias automaticamente
-    // Se refiere a dependencias a los objetos que una clase necesita para funcionar
-    // como por ejemplo un repositorio para acceder a datos
-    // La anotacion @Autowired le dice a Spring que debe proporcionar automaticamente
-    // una instancia del repositorio cuando se cree una instancia del servicio
     @Autowired
     public UsuarioServicio(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -38,5 +35,37 @@ public class UsuarioServicio {
 
     public void deleteByRun(String run) {
         usuarioRepository.deleteById(run);
+    }
+
+    // --- Methods used by AuthController ---
+    public Usuario authenticate(String correo, String password) {
+        Optional<Usuario> opt = usuarioRepository.findByCorreo(correo);
+        if (opt.isEmpty()) throw new AuthenticationException("Usuario no encontrado");
+        Usuario u = opt.get();
+        if (u.getPassword() == null || !u.getPassword().equals(password)) {
+            throw new AuthenticationException("Credenciales invalidas");
+        }
+        return u;
+    }
+
+    public Usuario registrarUsuario(RegisterRequest req) {
+        if (usuarioRepository.existsByCorreo(req.getCorreo()) || usuarioRepository.existsByRun(req.getRun())) {
+            throw new UsuarioExistenteException("El usuario ya existe");
+        }
+        Usuario u = new Usuario();
+        u.setRun(req.getRun());
+        u.setNombre(req.getNombre());
+        u.setApellidos(req.getApellidos());
+        u.setCorreo(req.getCorreo());
+        u.setPassword(req.getPassword());
+        // default role
+        u.setRole("USER");
+        // region/comuna/direccion left null for now
+        return usuarioRepository.save(u);
+    }
+
+    public Usuario findByCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 }
