@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.cienmilsabores.backendcienmil.model.Region;
-import com.cienmilsabores.backendcienmil.model.Comuna;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +18,10 @@ public class LoginResponse {
 	private String apellidos;
 	private String correo;
 	private String role;
-	private Region region;
-	private Comuna comuna;
+	// Expose region and comuna as codes and display names (strings) to avoid enum serialization issues on clients
+	private String regionCodigo;
+	private String regionNombre;
+	private String comunaCodigo;
+	private String comunaNombre;
 	private String direccion;
 }

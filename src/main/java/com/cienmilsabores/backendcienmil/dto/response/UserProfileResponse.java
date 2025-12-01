@@ -1,11 +1,8 @@
 package com.cienmilsabores.backendcienmil.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import com.cienmilsabores.backendcienmil.model.Region;
-import com.cienmilsabores.backendcienmil.model.Comuna;
+import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +13,9 @@ public class UserProfileResponse {
 	private String apellidos;
 	private String correo;
 	private String role;
-	private Region region;
-	private Comuna comuna;
+	private String regionCodigo;
+	private String regionNombre;
+	private String comunaCodigo;
+	private String comunaNombre;
 	private String direccion;
 }

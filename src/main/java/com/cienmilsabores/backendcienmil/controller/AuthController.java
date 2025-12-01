@@ -17,6 +17,7 @@ import com.cienmilsabores.backendcienmil.service.UsuarioServicio;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,6 +26,7 @@ import com.cienmilsabores.backendcienmil.exception.UsuarioExistenteException;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     @Autowired
@@ -44,7 +46,7 @@ public class AuthController {
             // Generar token JWT
             String token = jwtService.generateToken(usuario);
             
-            // Crear respuesta
+            // Crear respuesta (usar codigo y nombre para region/comuna)
             LoginResponse response = new LoginResponse(
                 token,
                 usuario.getRun(),
@@ -52,8 +54,10 @@ public class AuthController {
                 usuario.getApellidos(),
                 usuario.getCorreo(),
                 usuario.getRole(),
-                usuario.getRegion(),
-                usuario.getComuna(),
+                usuario.getRegion() != null ? usuario.getRegion().name() : null,
+                usuario.getRegion() != null ? usuario.getRegion().getNombre() : null,
+                usuario.getComuna() != null ? usuario.getComuna().name() : null,
+                usuario.getComuna() != null ? usuario.getComuna().getNombre() : null,
                 usuario.getDireccion()
             );
 
@@ -81,8 +85,10 @@ public class AuthController {
                 nuevoUsuario.getApellidos(),
                 nuevoUsuario.getCorreo(),
                 nuevoUsuario.getRole(),
-                nuevoUsuario.getRegion(),
-                nuevoUsuario.getComuna(),
+                nuevoUsuario.getRegion() != null ? nuevoUsuario.getRegion().name() : null,
+                nuevoUsuario.getRegion() != null ? nuevoUsuario.getRegion().getNombre() : null,
+                nuevoUsuario.getComuna() != null ? nuevoUsuario.getComuna().name() : null,
+                nuevoUsuario.getComuna() != null ? nuevoUsuario.getComuna().getNombre() : null,
                 nuevoUsuario.getDireccion()
             );
 
@@ -109,8 +115,10 @@ public class AuthController {
                     usuario.getApellidos(),
                     usuario.getCorreo(),
                     usuario.getRole(),
-                    usuario.getRegion(),
-                    usuario.getComuna(),
+                    usuario.getRegion() != null ? usuario.getRegion().name() : null,
+                    usuario.getRegion() != null ? usuario.getRegion().getNombre() : null,
+                    usuario.getComuna() != null ? usuario.getComuna().name() : null,
+                    usuario.getComuna() != null ? usuario.getComuna().getNombre() : null,
                     usuario.getDireccion()
                 ));
             }

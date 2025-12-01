@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name="producto")
@@ -25,8 +26,8 @@ public class Producto {
     private String categoria;
     @Column(length = 200)
     private String imagenUrl;
-    @Column
-    private double precio;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precio;
     @Column
     private boolean visible;
     @Column
