@@ -2,6 +2,8 @@ package com.cienmilsabores.backendcienmil.controller;
 
 import com.cienmilsabores.backendcienmil.model.*;
 import com.cienmilsabores.backendcienmil.service.PedidoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pedidos")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class PedidoController {
-    
+    private static final Logger logger = LoggerFactory.getLogger(PedidoController.class);
+
     @Autowired
     private PedidoService pedidoService;
     
@@ -21,10 +24,13 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity<Pedido> crearPedido(
             @RequestBody CrearPedidoRequest request) {
+        logger.info("[crearPedido] request usuarioRun={} itemsCount={} ", request.getUsuarioRun(), request.getItems() == null ? 0 : request.getItems().size());
         try {
             Pedido pedido = pedidoService.crearPedido(request.getUsuarioRun(), request.getItems());
+            logger.info("[crearPedido] pedido creado id={} numeroPedido={}", pedido.getId(), pedido.getNumeroPedido());
             return ResponseEntity.ok(pedido);
         } catch (Exception e) {
+            logger.error("[crearPedido] error creating pedido for usuarioRun={}: {}", request.getUsuarioRun(), e.toString(), e);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -32,10 +38,13 @@ public class PedidoController {
     @Operation(summary = "Obtener pedidos del usuario")
     @GetMapping("/usuario/{usuarioRun}")
     public ResponseEntity<List<Pedido>> obtenerPedidosUsuario(@PathVariable String usuarioRun) {
+        logger.info("[obtenerPedidosUsuario] usuarioRun={}", usuarioRun);
         try {
             List<Pedido> pedidos = pedidoService.obtenerPedidosPorUsuario(usuarioRun);
+            logger.info("[obtenerPedidosUsuario] found {} pedidos for usuarioRun={}", pedidos == null ? 0 : pedidos.size(), usuarioRun);
             return ResponseEntity.ok(pedidos);
         } catch (Exception e) {
+            logger.error("[obtenerPedidosUsuario] error fetching pedidos for usuarioRun={}: {}", usuarioRun, e.toString(), e);
             return ResponseEntity.notFound().build();
         }
     }
@@ -43,7 +52,9 @@ public class PedidoController {
     @Operation(summary = "Obtener todos los pedidos (admin)")
     @GetMapping
     public ResponseEntity<List<Pedido>> obtenerTodosPedidos() {
+        logger.info("[obtenerTodosPedidos] fetching all pedidos");
         List<Pedido> pedidos = pedidoService.obtenerTodosLosPedidos();
+        logger.info("[obtenerTodosPedidos] totalPedidos={}", pedidos == null ? 0 : pedidos.size());
         return ResponseEntity.ok(pedidos);
     }
     
@@ -52,10 +63,13 @@ public class PedidoController {
     public ResponseEntity<Pedido> actualizarEstado(
             @PathVariable Long pedidoId,
             @RequestBody ActualizarEstadoRequest request) {
+        logger.info("[actualizarEstado] pedidoId={} nuevoEstado={}", pedidoId, request.getNuevoEstado());
         try {
             Pedido pedido = pedidoService.actualizarEstado(pedidoId, request.getNuevoEstado());
+            logger.info("[actualizarEstado] pedido actualizado id={} estado={}", pedido.getId(), pedido.getEstado());
             return ResponseEntity.ok(pedido);
         } catch (Exception e) {
+            logger.error("[actualizarEstado] error updating estado for pedidoId={}: {}", pedidoId, e.toString(), e);
             return ResponseEntity.notFound().build();
         }
     }

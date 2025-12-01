@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/util")
 @Tag(name = "Utilidades", description = "Regiones y comunas disponibles")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UtilController {
 
     @Operation(summary = "Listar regiones", description = "Devuelve el catalogo de regiones")

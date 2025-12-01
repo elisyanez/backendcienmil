@@ -18,7 +18,7 @@ public class LoginResponse {
 	private String apellidos;
 	private String correo;
 	private String role;
-	// Expose region and comuna as codes and display names (strings) to avoid enum serialization issues on clients
+    // Expone region y comuna como códigos y nombres para evitar problemas de serialización de enums en los clientes
 	private String regionCodigo;
 	private String regionNombre;
 	private String comunaCodigo;
