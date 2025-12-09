@@ -1,1 +1,4 @@
-36Ub29R4A7SnPCcaUWtFy3F5BIH_7u5iAcUFy2dVv81W2Vwi7
+ngrok config add-authtoken 36Ub29R4A7SnPCcaUWtFy3F5BIH_7u5iAcUFy2dVv81W2Vwi7
+
+
+ngrok http 8080 --region sa
