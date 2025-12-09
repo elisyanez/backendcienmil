@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.5.0</version> <!-- o versión estable actual -->
+			<version>2.7.0</version>
 		</dependency>
 		<!-- JSON Web Token (jjwt) dependencies -->
 		<dependency>

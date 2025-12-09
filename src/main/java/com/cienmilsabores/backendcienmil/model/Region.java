@@ -27,4 +27,9 @@ public enum Region {
     public String getNombre() {
         return nombre;
     }
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }

@@ -30,7 +30,8 @@ public class UsuarioServicio {
     }
 
     public Usuario save(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+        return saved;
     }
 
     public void deleteByRun(String run) {

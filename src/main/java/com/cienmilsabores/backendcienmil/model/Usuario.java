@@ -30,7 +30,7 @@ public class Usuario {
     private String correo;
 
     @Column(length = 50)
-    private String role;
+    private String role = "cliente";
 
     @Column(length = 100)
     private String password;

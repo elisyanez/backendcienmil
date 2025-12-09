@@ -2,8 +2,6 @@ package com.cienmilsabores.backendcienmil.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import com.cienmilsabores.backendcienmil.model.Region;
-import com.cienmilsabores.backendcienmil.model.Comuna;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

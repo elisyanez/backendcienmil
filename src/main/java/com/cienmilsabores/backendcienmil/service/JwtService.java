@@ -19,22 +19,40 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    // Keep a secret long enough for HS256 (at least 32 bytes recommended)
     private final String SECRET = "miClaveSecretaSuperSeguraQueDebeSerLarga_y_mas_segura_123456";
     private final Key signingKey = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     private final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7; // 7 días
+
+    public Key getSigningKey() {
+        return signingKey;
+    }
 
     public String generateToken(Usuario usuario) {
         Objects.requireNonNull(usuario, "usuario must not be null");
 
         return Jwts.builder()
-            .setSubject(usuario.getCorreo())
-            .claim("run", usuario.getRun())
-            .claim("role", usuario.getRole())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(signingKey, SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(usuario.getCorreo())
+                .claim("run", usuario.getRun())
+                .claim("role", usuario.getRole())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // Overload: generate token from Spring Security UserDetails
+    public String generateToken(org.springframework.security.core.userdetails.UserDetails userDetails) {
+        Objects.requireNonNull(userDetails, "userDetails must not be null");
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities().stream()
+                    .map(auth -> auth.getAuthority())
+                    .findFirst()
+                    .orElse("ROLE_USER"))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public boolean validateToken(String token) {
@@ -49,11 +67,11 @@ public class JwtService {
     public String extractUsername(String token) {
         try {
             return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                    .setSigningKey(signingKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
@@ -69,13 +87,21 @@ public class JwtService {
                 }
             }
         }
-        
+
         // 2. Intentar desde header (fallback)
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        
+
         return null;
+    }
+
+    public io.jsonwebtoken.Claims getAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(signingKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

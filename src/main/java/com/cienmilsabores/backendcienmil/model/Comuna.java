@@ -309,4 +309,9 @@ public enum Comuna {
     public Region getRegion() {
         return region;
     }
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }
